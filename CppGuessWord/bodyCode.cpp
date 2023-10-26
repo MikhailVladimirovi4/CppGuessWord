@@ -6,11 +6,15 @@
 #include <cctype>
 
 using namespace std;
+char GetGuess(string);
+string Check(string,string, char);
+int wrong = 0;
 
 int main()
 {
 	const int MAX_WRONG = 8;
 	vector<string> words;
+	char guess;
 
 	words.push_back("guess");
 	words.push_back("hangman");
@@ -20,8 +24,6 @@ int main()
 	random_shuffle(words.begin(), words.end());
 
 	const string THE_WORD = words[0];
-
-	int wrong = 0;
 	string soFar(THE_WORD.size(), '-');
 	string used = "";
 	cout << "Welcome to Hangman. Good Luck!\n";
@@ -32,37 +34,14 @@ int main()
 		cout << "\n\nYou have " << (MAX_WRONG - wrong) << " incorrect guessess left.\n";
 		cout << "\nYou've used the following letters:\n" << used << endl;
 
-		char guess;
-		cout << "\n\nEnter your guess: ";
-		cin >> guess;
-		guess = tolower(guess);
-
-		while (used.find(guess) != string::npos)
-		{
-			cout << "\nYou've already guessed " << guess << endl;
-			cout << "Enter your guess : ";
-			cin >> guess;
-			guess = tolower(guess);
-		}
-
+		guess = GetGuess(used);
+		cout << "\nGuess: " << guess;
 		used += guess;
+		soFar = Check(THE_WORD, soFar, guess);
 
-		if (THE_WORD.find(guess) != string::npos)
-		{
-			cout << "that's right1 " << guess << " is in the word.\n";
-
-			for (int i = 0; i < THE_WORD.length(); ++i)
-			{
-				if (THE_WORD[i] == guess)
-					soFar[i] = guess;
-			}
-		}
-		else
-		{
-			cout << "Sorry. " << guess << " isn't in the word.\n";
-			++wrong;
-		}
+		cout << "\n soFar: " << soFar << endl;
 	}
+
 	if (wrong == MAX_WRONG)
 	{
 		cout << "\nYou loss!";
@@ -75,4 +54,40 @@ int main()
 	cout << "\n\n The word was " << THE_WORD << endl;
 
 	return 0;
+}
+
+char GetGuess(string used)
+{
+	char f = ' ';
+
+	while (used.find(f) != string::npos)
+	{
+		cout << "\nYou've already guessed " << f << endl;
+		cout << "Enter your guess : ";
+		cin >> f;
+		f = tolower(f);
+	}
+
+	return f;
+}
+
+string Check(string THE_WORD, string soFar, char guess)
+{
+	if (THE_WORD.find(guess) != string::npos)
+	{
+		cout << "that's right1 " << guess << " is in the word.\n";
+
+		for (int i = 0; i < THE_WORD.length(); ++i)
+		{
+			if (THE_WORD[i] == guess)
+				soFar[i] = guess;
+		}
+	}
+	else
+	{
+		cout << "Sorry. " << guess << " isn't in the word.\n";
+		++wrong;
+	}
+
+	return soFar;
 }
